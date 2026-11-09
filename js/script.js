@@ -133,3 +133,51 @@ if ('serviceWorker' in navigator) {
       });
   });
 }
+
+let deferredPrompt = null;
+
+const installBanner = document.getElementById('install-banner');
+const installButtonYes = document.getElementById('installButton-yes');
+const installButtonNo = document.getElementById('installButton-no');
+
+window.addEventListener('beforeinstallprompt', (event) => {
+  event.preventDefault();
+  deferredPrompt = event;
+  installBanner.classList.remove('hidden');
+});
+
+installButtonYes.addEventListener('click', async () => {
+  installBanner.classList.add('hidden');
+  if(!deferredPrompt){
+    return;
+  }
+
+  deferredPrompt.prompt()
+
+  const { outcome } = await deferredPrompt.userChoice;
+
+  console.log(`[App] install prompt outcome: ${outcome}`);
+  deferredPrompt = null;
+});
+
+installButtonNo.addEventListener('click', () => {
+  installBanner.classList.add('hidden');
+});
+
+function requestNotificationPermission(){
+  if(!("Notification" in window)){
+    console.log("Notifications are not supported in this browser.");
+    return;
+  }
+
+  Notification.requestPermission().then((permission) => {
+    console.log(`Notification permission: ${permission}`);
+    if(permission === "granted"){
+      new Notification("Space Explorer", {
+        body: "Notifications are on! We'll keep it simple for now",
+        icon: "icons/icon-192.png",
+      });
+    }
+  });
+}
+
