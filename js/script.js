@@ -16,7 +16,7 @@ setupDateInputs(startInput, endInput);
 
 // DEMO_KEY works for testing. A personal NASA key can be provided in the page
 // before this script loads with: window.NASA_API_KEY = 'your-key';
-const apiKey = window.NASA_API_KEY || 'DEMO_KEY';
+const apiKey = window.NASA_API_KEY || 'czffgbfJkgMwkgFGfWc6BwngKpMLWNzRFrJQD6Qw';
 const apiUrl = 'https://api.nasa.gov/planetary/apod';
 
 // Fetch the pictures for the selected dates from NASA.
@@ -120,3 +120,16 @@ document.addEventListener('keydown', (event) => {
     closeModal();
   }
 });
+
+// Register the service worker after the page has finished loading.
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./js/service-worker.js')
+      .then(() => {
+        console.log('Service worker registered successfully.');
+      })
+      .catch((error) => {
+        console.error('Service worker registration failed:', error);
+      });
+  });
+}
